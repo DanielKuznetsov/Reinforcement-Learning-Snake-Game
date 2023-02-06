@@ -58,8 +58,26 @@ class SnakeGame:
 
     def play_step(self):
         # 1. Collect the user's input
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.direction = Direction.LEFT
+                elif event.key == pygame.K_RIGHT:
+                    self.direction = Direction.RIGHT
+                elif event.key == pygame.K_UP:
+                    self.direction = Direction.UP
+                elif event.key == pygame.K_DOWN:
+                    self.direction = Direction.DOWN
 
         # 2. Move the snake
+
+        # Update the head
+        self._move(self.direction)
+        self.snake.insert(0, self.head)
 
         # 3. Check if the game is over
 
@@ -88,6 +106,20 @@ class SnakeGame:
 
         # Updating the full surface of the screen
         pygame.display.flip()
+
+    def _move(self, direction):
+        x = self.head.x
+        y = self.head.y
+        if direction == Direction.RIGHT:
+            x += BLOCK_SIZE
+        elif direction == Direction.LEFT:
+            x -= BLOCK_SIZE
+        elif direction == Direction.DOWN:
+            y += BLOCK_SIZE
+        elif direction == Direction.UP:
+            y -= BLOCK_SIZE
+
+        self.head = Point(x, y)
 
 
 if __name__ == '__main__':
