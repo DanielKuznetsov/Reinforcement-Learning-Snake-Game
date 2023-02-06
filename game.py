@@ -23,7 +23,7 @@ BLUE2 = (0, 100, 255)
 BLACK = (0, 0, 0)
 
 BLOCK_SIZE = 20
-SPEED = 30
+SPEED = 15
 
 class SnakeGame:
 
@@ -80,8 +80,17 @@ class SnakeGame:
         self.snake.insert(0, self.head)
 
         # 3. Check if the game is over
+        game_over = False
+        if self._is_collision():
+            game_over = True
+            return game_over, self.score
 
         # 4. Place food in a new place or move the snake
+        if self.head == self.food:
+            self.score += 1
+            self._place_food()
+        else:
+            self.snake.pop()
 
         # 5. Update UI and clock
         self._update_ui()
@@ -90,6 +99,17 @@ class SnakeGame:
         # 6. Return if game is over and the score afterwards
         game_over = False
         return game_over, self.score
+
+    def _is_collision(self):
+        # Boundary is hit
+        if self.head.x > self.width - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.height - BLOCK_SIZE or self.head.y < 0:
+            return True
+
+        # Or hits itself
+        if self.head in self.snake[1:]:
+            return True
+
+        return False
 
     def _update_ui(self):
         self.display.fill(BLACK)
