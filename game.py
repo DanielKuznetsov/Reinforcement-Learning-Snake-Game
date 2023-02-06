@@ -7,6 +7,12 @@ from collections import namedtuple
 pygame.init()
 font = pygame.font.Font('arial.ttf', 25)
 
+# reset
+# reward
+# play (action) -> direction
+# game_iteration
+# is_collision
+
 class Direction(Enum):
     RIGHT = 1
     LEFT = 2
@@ -25,7 +31,7 @@ BLACK = (0, 0, 0)
 BLOCK_SIZE = 20
 SPEED = 15
 
-class SnakeGame:
+class SnakeGameAI:
 
     def __init__(self, width=640, height=480):
         self.width = width
@@ -36,6 +42,11 @@ class SnakeGame:
         pygame.display.set_caption('Snake')
         self.clock = pygame.time.Clock()
 
+        # Reset the game
+        self.reset()
+
+
+    def reset(self):
         # Initialize the game state (direction, food placement)
         self.direction = Direction.RIGHT
 
@@ -47,6 +58,7 @@ class SnakeGame:
         self.score = 0
         self.food = None
         self._place_food()
+        self.frame_iteration = 0
 
     def _place_food(self):
         x = random.randint(0, (self.width - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
@@ -56,38 +68,33 @@ class SnakeGame:
         if self.food in self.snake:
             self._place_food()
 
-    def play_step(self):
+    def play_step(self, action):
+        self.frame_iteration += 1
+
         # 1. Collect the user's input
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    self.direction = Direction.LEFT
-                elif event.key == pygame.K_RIGHT:
-                    self.direction = Direction.RIGHT
-                elif event.key == pygame.K_UP:
-                    self.direction = Direction.UP
-                elif event.key == pygame.K_DOWN:
-                    self.direction = Direction.DOWN
-
         # 2. Move the snake
 
         # Update the head
-        self._move(self.direction)
+        self._move(action)
         self.snake.insert(0, self.head)
 
         # 3. Check if the game is over
+        reward = 0
         game_over = False
-        if self._is_collision():
+        if self._is_collision() or self.frame_iteration > 100 * len(self.snake):
             game_over = True
-            return game_over, self.score
+            reward -= 10
+            return reward, game_over, self.score
 
         # 4. Place food in a new place or move the snake
         if self.head == self.food:
             self.score += 1
+            reward += 10
             self._place_food()
         else:
             self.snake.pop()
@@ -98,15 +105,18 @@ class SnakeGame:
 
         # 6. Return if game is over and the score afterwards
         game_over = False
-        return game_over, self.score
+        return reward, game_over, self.score
 
-    def _is_collision(self):
+    def _is_collision(self, point=None):
+        if point is None:
+            point = self.head
+
         # Boundary is hit
-        if self.head.x > self.width - BLOCK_SIZE or self.head.x < 0 or self.head.y > self.height - BLOCK_SIZE or self.head.y < 0:
+        if point.x > self.width - BLOCK_SIZE or point.x < 0 or point.y > self.height - BLOCK_SIZE or point.y < 0:
             return True
 
         # Or hits itself
-        if self.head in self.snake[1:]:
+        if point in self.snake[1:]:
             return True
 
         return False
@@ -127,7 +137,7 @@ class SnakeGame:
         # Updating the full surface of the screen
         pygame.display.flip()
 
-    def _move(self, direction):
+    def _move(self, action):
         x = self.head.x
         y = self.head.y
         if direction == Direction.RIGHT:
@@ -143,7 +153,7 @@ class SnakeGame:
 
 
 if __name__ == '__main__':
-    game = SnakeGame()
+    game = SnakeGameAI()
 
     # Game loop
     while True:
