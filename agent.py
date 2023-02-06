@@ -17,18 +17,71 @@ class Agent:
         self.epsilon = 0 # Parameter to control randomness
         self.gamma = 0 # Discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # Call popleft()
+        self.model = None
+        self.trainer = None
 
     def get_state(self, game):
-        pass
+        head = game.snake[0]
+
+        point_left = Point(head.x - 20, head.y)
+        point_right = Point(head.x + 20, head.y)
+        point_up = Point(head.x, head.y - 20)
+        point_down = Point(head.x, head.y + 20)
+
+        dir_left = game.direction == Direction.LEFT
+        dir_right = game.direction == Direction.RIGHT
+        dir_up = game.direction == Direction.UP
+        dir_down = game.direction == Direction.DOWN
+
+        state = [
+            # Danger is right in front of us
+            (dir_right and game.is_collision(point_right)) or
+            (dir_left and game.is_collision(point_left)) or
+            (dir_up and game.is_collision(point_up)) or
+            (dir_down and game.is_collision(point_down)),
+
+            # Danger on the right
+            (dir_up and game.is_collision(point_right)) or
+            (dir_down and game.is_collision(point_left)) or
+            (dir_left and game.is_collision(point_up)) or
+            (dir_right and game.is_collision(point_down)),
+
+            # Danger on the left
+            (dir_down and game.is_collision(point_right)) or
+            (dir_up and game.is_collision(point_left)) or
+            (dir_right and game.is_collision(point_up)) or
+            (dir_left and game.is_collision(point_down)),
+
+            # Move direction
+            dir_left,
+            dir_right,
+            dir_up,
+            dir_down,
+
+            # Food location
+            game.food.x < game.head.x,  # food left
+            game.food.x > game.head.x,  # food right
+            game.food.y < game.head.y,  # food up
+            game.food.y > game.head.y  # food down
+        ]
+
+        return np.array(state, dtype=int)
 
     def remember(self, state, action, reward, next_state, done):
-        pass
+        # If this exceeds maximum memory, pop left
+        self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
-        pass
+        if len(self.memory) > BATCH_SIZE:
+            mini_sample = random.sample(self.memory, BATCH_SIZE)  # list of tuples
+        else:
+            mini_sample = self.memory
+
+        states, actions, rewards, next_states, dones = zip(*mini_sample)
+        self.trainer.train_step(states, actions, rewards, next_states, dones)
 
     def train_short_memory(self, state, action, reward, next_state, done):
-        pass
+        self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_action(self, state):
         pass
