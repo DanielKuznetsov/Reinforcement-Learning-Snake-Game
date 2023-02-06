@@ -2,6 +2,7 @@ import torch
 import random
 import numpy as np
 
+from model import Linear_QNet, QTrainer
 from collections import deque
 from game import SnakeGameAI, Direction, Point
 
@@ -14,11 +15,11 @@ class Agent:
     def __init__(self):
         self.number_games = 0
 
-        self.epsilon = 0 # Parameter to control randomness
-        self.gamma = 0 # Discount rate
-        self.memory = deque(maxlen=MAX_MEMORY) # Call popleft()
-        self.model = None
-        self.trainer = None
+        self.epsilon = 0  # Parameter to control randomness
+        self.gamma = 0.9  # Discount rate
+        self.memory = deque(maxlen=MAX_MEMORY)  # Call popleft()
+        self.model = Linear_QNet(11, 256, 3)
+        self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
     def get_state(self, game):
         head = game.snake[0]
@@ -92,7 +93,7 @@ class Agent:
             final_move[move] = 1
         else:
             state_zero = torch.tensor(state, dtype=torch.float)
-            prediction = self.model.predict(state_zero)
+            prediction = self.model(state_zero)
             move = torch.argmax(prediction).item()
             final_move[move] = 1
 
