@@ -84,7 +84,19 @@ class Agent:
         self.trainer.train_step(state, action, reward, next_state, done)
 
     def get_action(self, state):
-        pass
+        self.epsilon = 80 - self.number_games
+        final_move = [0, 0, 0]
+
+        if random.randint(0, 200) < self.epsilon:
+            move = random.randint(0, 2)
+            final_move[move] = 1
+        else:
+            state_zero = torch.tensor(state, dtype=torch.float)
+            prediction = self.model.predict(state_zero)
+            move = torch.argmax(prediction).item()
+            final_move[move] = 1
+
+        return final_move
 
 def train():
     plot_scores = []
