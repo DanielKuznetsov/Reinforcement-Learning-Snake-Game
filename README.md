@@ -10,6 +10,7 @@ Reinforcement learning is a type of machine learning where an agent learns to ma
 # Table Of Contents
 -  [In a Nutshell](#in-a-nutshell)
 -  [In Details](#in-details)
+-  [Results](#results)
 
 # In a Nutshell   
 
@@ -36,7 +37,7 @@ The training process is handled by the QTrainer class, which uses the Q-learning
 3. `pip install pygame`
 4. `pip install torch torchvision`
 5. `pip install matplotlib python`
-6. `python agent.py
+6. `python agent.py`
 
 # In Details
 ```
@@ -54,3 +55,11 @@ The training process is handled by the QTrainer class, which uses the Q-learning
 └── game				
      ├── reset - 
      └── is_collision - either hits a boundary or itself
+```
+
+# Results
+
+<img width="1288" alt="results" src="https://user-images.githubusercontent.com/85589967/217150521-71113f63-8144-47c6-bb98-f2db8d5fb4a0.png">
+
+
+The agent is able to learn how to play the game over time, as evidenced by the increasing rewards it receives as it plays more games. After training, the agent is able to play the game optimally, consistently achieving a high score.
