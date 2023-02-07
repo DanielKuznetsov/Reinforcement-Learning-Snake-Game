@@ -46,14 +46,14 @@ The training process is handled by the QTrainer class, which uses the Q-learning
 │    └── QTrainer
 │
 ├──  agent  
-│    └── get_state - resets the game state
+│    └── get_state - initializes the game state
 │    └── train - this file contains the train loops
 │ 
 ├──  helper  
 │    └── plot - plot the resulting diagram
 │
 └── game				
-     ├── reset - 
+     ├── reset - resets the state
      └── is_collision - either hits a boundary or itself
 ```
 
