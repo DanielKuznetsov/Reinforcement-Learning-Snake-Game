@@ -1,4 +1,4 @@
-# PyTorch Project Template
+# Snake Game using Reinforcement Learning
 Reinforcement learning is a type of machine learning where an agent learns to make decisions by performing actions in an environment to maximize a reward signal. The agent learns through trial and error, gradually improving its decision-making abilities over time. It's used in problems where the optimal solution is not known beforehand, and the agent must explore its environment to find the best solution. This approach is commonly used in problems such as game playing, robotic control, and recommendation systems.
 
 **The concept of reinforcement learning shares similarities with the traditional education system. However, it has fallen behind in incorporating the recent advancements in technology. I attempted to create a self-learning model and applied it to a snake game to demonstrate the potential improvements that can be achieved. By doing so, I aim to showcase the difference between conventional learning methods and those powered by machine learning.**
@@ -60,6 +60,5 @@ The training process is handled by the QTrainer class, which uses the Q-learning
 # Results
 
 <img width="1288" alt="results" src="https://user-images.githubusercontent.com/85589967/217150521-71113f63-8144-47c6-bb98-f2db8d5fb4a0.png">
-
 
 The agent is able to learn how to play the game over time, as evidenced by the increasing rewards it receives as it plays more games. After training, the agent is able to play the game optimally, consistently achieving a high score.
