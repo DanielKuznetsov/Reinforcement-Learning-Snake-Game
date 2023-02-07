@@ -31,11 +31,11 @@ class Linear_QNet(nn.Module):
 
 # For optimization and training
 class QTrainer:
-    def __init__(self, model, learning_rate, gamma):
-        self.learning_rate = learning_rate
+    def __init__(self, model, lr, gamma):
+        self.lr = lr
         self.gamma = gamma
         self.model = model
-        self.optimizer = optim.Adam(model.parameters(), learning_rate=self.learning_rate)
+        self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
         self.criterion = nn.MSELoss()  # Loss function
 
     def train_step(self, state, action, reward, next_state, done):
@@ -51,7 +51,7 @@ class QTrainer:
             next_state = torch.unsqueeze(next_state, 0)
             action = torch.unsqueeze(action, 0)
             reward = torch.unsqueeze(reward, 0)
-            done = (done,)
+            done = (done, )
 
         # 1: Predicted Q values with current state
         pred = self.model(state)
